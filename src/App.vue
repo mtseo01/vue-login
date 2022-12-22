@@ -2,10 +2,26 @@
   <v-app id="inspire">
     <v-navigation-drawer v-model="drawer">
       <!--  -->
-      <v-card>
-        <v-list :items="items" item-title="name" item-value="id"></v-list>
-        <v-list title="home"></v-list>
-      </v-card>
+      <v-list density="compact">
+        <v-list-item
+          title="Home"
+          value="home"
+          router
+          :to="{ name: 'home' }"
+        ></v-list-item>
+        <v-list-item
+          title="Login"
+          value="login"
+          router
+          :to="{ name: 'login' }"
+        ></v-list-item>
+        <v-list-item
+          title="MyPage"
+          value="myPage"
+          router
+          :to="{ name: 'myPage' }"
+        ></v-list-item>
+      </v-list>
     </v-navigation-drawer>
 
     <v-app-bar>
@@ -13,11 +29,16 @@
 
       <v-toolbar-title>Study Vue</v-toolbar-title>
       <template v-slot:append>
-        <v-btn icon="mdi-heart"></v-btn>
-
         <v-btn icon="mdi-magnify"></v-btn>
 
-        <v-btn icon="mdi-dots-vertical"></v-btn>
+        <v-btn id="menu-activator" icon="mdi-dots-vertical"></v-btn>
+        <v-menu activator="#menu-activator">
+          <v-list>
+            <v-list-item title="Click Me 1" value="Click Me 1"> </v-list-item>
+            <v-list-item title="Click Me 2" value="Click Me 2"> </v-list-item>
+            <v-list-item title="Click Me 3" value="Click Me 3"> </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-app-bar>
 
@@ -37,11 +58,13 @@ export default {
     items: [
       {
         name: 'Home',
-        id: 1
+        id: 1,
+        router: '/'
       },
       {
         name: 'Login',
-        id: 2
+        id: 2,
+        router: '/login'
       },
       {
         name: 'My Page',

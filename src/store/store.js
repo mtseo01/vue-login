@@ -1,7 +1,8 @@
 import { createStore } from 'vuex'
-
+import router from '../router'
 export default createStore({
   state: {
+    userInfo: null,
     allUsers: [
       { id: 1, name: 'kim', email: 'kim@gmail.com', password: '123456' },
       { id: 2, name: 'choi', email: 'choi@gmail.com', password: '123456' }
@@ -13,9 +14,10 @@ export default createStore({
   mutations: {
     // state 값을 변경하는 로직
     // 로그인 성공
-    loginSuccess(state) {
+    loginSuccess(state, payload) {
       state.isLogin = true
       state.isLoginError = false
+      state.userInfo = payload
     },
     // 로그인 실패
     loginError(state) {
@@ -31,11 +33,12 @@ export default createStore({
       state.allUsers.forEach((user) => {
         if (user.email === loginObj.email) selectedUser = user
       })
-      selectedUser === null
-        ? commit('loginError')
-        : selectedUser.password !== loginObj.password
-        ? commit('loginError')
-        : commit('loginSuccess')
+      if (selectedUser === null || selectedUser.password !== loginObj.password)
+        commit('loginError')
+      else {
+        commit('loginSuccess', selectedUser)
+        router.push({ name: 'myPage' })
+      }
     }
   },
   modules: {}

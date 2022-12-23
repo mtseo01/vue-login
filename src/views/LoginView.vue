@@ -23,7 +23,7 @@
           ></v-text-field>
 
           <v-alert
-            v-if="failAlert"
+            v-if="isLoginError"
             title=""
             type="error"
             variant="text"
@@ -31,8 +31,17 @@
           >
             이메일 또는 비밀번호를 잘못 입력했습니다.
           </v-alert>
+          <v-alert
+            v-else-if="isLogin"
+            title=""
+            type="success"
+            variant="text"
+            style="font-size: 12px"
+          >
+            로그인을 성공하였습니다.
+          </v-alert>
           <v-btn
-            @click="login"
+            @click="login({ email, password })"
             :disabled="!form"
             :loading="loading"
             block
@@ -48,38 +57,28 @@
     </v-container>
   </div>
 </template>
+
 <script>
+import { mapState, mapActions } from 'vuex'
 export default {
   components: {},
   data() {
     return {
+      ...mapActions(['login']),
       form: false,
       email: null,
       password: null,
-      loading: false,
-      failAlert: false,
-      allUsers: [
-        { id: 1, name: 'kim', email: 'kim@gmail.com', password: '123456' },
-        { id: 2, name: 'choi', email: 'choi@gmail.com', password: '123456' }
-      ]
+      loading: false
     }
+  },
+  computed: {
+    ...mapState(['isLogin', 'isLoginError'])
   },
   setup() {},
   created() {},
   mounted() {},
   unmounted() {},
   methods: {
-    login() {
-      let selectedUser = null
-      this.allUsers.forEach((user) => {
-        if (user.email === this.email) selectedUser = user
-      })
-      selectedUser === null
-        ? (this.failAlert = true)
-        : selectedUser.password !== this.password
-        ? (this.failAlert = true)
-        : alert('로그인 되었습니다.')
-    },
     onSubmit() {
       if (!this.form) return
 

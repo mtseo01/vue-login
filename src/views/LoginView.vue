@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container style="max-width: 400px">
-      <v-card class="mx-auto px-6 py-8" max-width="344">
+      <v-card title="ID 로그인" class="mx-auto px-6 py-8" max-width="344">
         <v-form v-model="form" @submit.prevent="onSubmit"
           ><v-text-field
             clearable
@@ -22,9 +22,17 @@
             placeholder="비밀번호를 입력하세요"
           ></v-text-field>
 
-          <br />
-
+          <v-alert
+            v-if="failAlert"
+            title=""
+            type="error"
+            variant="text"
+            style="font-size: 12px"
+          >
+            이메일 또는 비밀번호를 잘못 입력했습니다.
+          </v-alert>
           <v-btn
+            @click="login"
             :disabled="!form"
             :loading="loading"
             block
@@ -48,7 +56,12 @@ export default {
       form: false,
       email: null,
       password: null,
-      loading: false
+      loading: false,
+      failAlert: false,
+      allUsers: [
+        { id: 1, name: 'kim', email: 'kim@gmail.com', password: '123456' },
+        { id: 2, name: 'choi', email: 'choi@gmail.com', password: '123456' }
+      ]
     }
   },
   setup() {},
@@ -56,15 +69,26 @@ export default {
   mounted() {},
   unmounted() {},
   methods: {
+    login() {
+      let selectedUser = null
+      this.allUsers.forEach((user) => {
+        if (user.email === this.email) selectedUser = user
+      })
+      selectedUser === null
+        ? (this.failAlert = true)
+        : selectedUser.password !== this.password
+        ? (this.failAlert = true)
+        : alert('로그인 되었습니다.')
+    },
     onSubmit() {
       if (!this.form) return
 
       this.loading = true
 
-      setTimeout(() => (this.loading = false), 2000)
+      setTimeout(() => (this.loading = false), 300)
     },
     required(v) {
-      return !!v || '입력이 필요합니다'
+      return !!v || '입력이 필요합니다.'
     }
   }
 }

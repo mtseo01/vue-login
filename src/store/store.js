@@ -23,6 +23,11 @@ export default createStore({
     loginError(state) {
       state.isLogin = false
       state.isLoginError = true
+    },
+    logout(state) {
+      state.isLogin = false
+      state.isLoginError = false
+      state.userInfo = null
     }
   },
   actions: {
@@ -39,7 +44,13 @@ export default createStore({
         commit('loginSuccess', selectedUser)
         router.push({ name: 'myPage' })
       }
+    },
+    logout({ commit }) {
+      commit('logout')
+      alert('로그아웃 하였습니다.')
+      router.push({ name: 'home' })
     }
   },
+
   modules: {}
 })

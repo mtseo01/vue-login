@@ -29,6 +29,23 @@
 
       <v-toolbar-title>Study Vue</v-toolbar-title>
       <template v-slot:append>
+        <v-btn
+          v-if="isLogin === false"
+          router
+          :to="{ name: 'login' }"
+          append-icon="mdi-login"
+          variant="text"
+        >
+          로그인
+        </v-btn>
+        <v-btn
+          v-else
+          append-icon="mdi-logout"
+          variant="text"
+          @click="$store.dispatch('logout')"
+        >
+          로그아웃
+        </v-btn>
         <v-btn icon="mdi-magnify"></v-btn>
 
         <v-btn id="menu-activator" icon="mdi-dots-vertical"></v-btn>
@@ -50,6 +67,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'App',
 
@@ -71,6 +89,12 @@ export default {
         id: 3
       }
     ]
-  })
+  }),
+  computed: {
+    ...mapState(['isLogin'])
+  },
+  methods: {
+    // ...mapActions(['logout'])
+  }
 }
 </script>

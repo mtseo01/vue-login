@@ -1,12 +1,9 @@
 import { createStore } from 'vuex'
 import router from '../router'
+import axios from 'axios'
 export default createStore({
   state: {
     userInfo: null,
-    allUsers: [
-      { id: 1, name: 'kim', email: 'kim@gmail.com', password: '123456' },
-      { id: 2, name: 'choi', email: 'choi@gmail.com', password: '123456' }
-    ],
     isLogin: false,
     isLoginError: false
   },
@@ -33,17 +30,19 @@ export default createStore({
   actions: {
     // 비지니스 로직
     // 로그인 시도
-    login({ state, commit }, loginObj) {
-      let selectedUser = null
-      state.allUsers.forEach((user) => {
-        if (user.email === loginObj.email) selectedUser = user
-      })
-      if (selectedUser === null || selectedUser.password !== loginObj.password)
-        commit('loginError')
-      else {
-        commit('loginSuccess', selectedUser)
-        router.push({ name: 'myPage' })
-      }
+    login({ commit }, loginObj) {
+      axios
+        .post('http://localhost:3000/api/users', loginObj)
+        .then((res) => {
+          console.log(res)
+          if (res.data.success) {
+            commit('loginSuccess', res.data.selectedUser)
+            router.push({ name: 'myPage' })
+          } else {
+            commit('loginError')
+          }
+        })
+        .catch((err) => console.log(err))
     },
     logout({ commit }) {
       commit('logout')

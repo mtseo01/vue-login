@@ -25,3 +25,8 @@ export default {
   methods: {}
 }
 </script>
+<style scoped>
+div {
+  text-align: center;
+}
+</style>

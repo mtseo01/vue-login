@@ -32,9 +32,11 @@ export default createStore({
     // 로그인 시도
     login({ commit }, loginObj) {
       axios
-        .post('http://localhost:3000/api/users', loginObj)
+        .post('http://localhost:3000/api/login', loginObj, {
+          withCredentials: true
+        })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.data.success) {
             commit('loginSuccess', res.data.selectedUser)
             router.push({ name: 'myPage' })

@@ -3,11 +3,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
-const allUsers = [
-  { id: 1, name: 'kim', email: 'kim@gmail.com', password: '123456' },
-  { id: 2, name: 'choi', email: 'choi@gmail.com', password: '123456' }
-];
-
 const cookieOptions = {
   path: '/',
   httpOnly: true,
@@ -50,32 +45,35 @@ exports.singup = (req, res) => {
 };
 
 exports.login = (req, res) => {
-  const userEmail = req.body.email;
-  const userPassword = req.body.password;
-  let selectedUser = null;
-
-  allUsers.forEach((user) => {
-    if (user.email === userEmail) selectedUser = user;
-  });
-
-  const token = jwt.sign(
-    {
-      email: selectedUser.email,
-      name: selectedUser.name
-    },
-    'abc1234',
-    {
-      expiresIn: '15m',
-      issuer: 'server-admin'
+  User.find({ email: req.body.email }).then((user) => {
+    if (user.length < 1) {
+      res.send({ success: false });
+      return res.status(404).json({
+        message: 'User not found'
+      });
     }
-  );
-
-  if (selectedUser === null || selectedUser.password !== userPassword) {
-    res.send({ success: false });
-  } else {
-    res.cookie('token', token, cookieOptions);
-    res.send({ success: true, selectedUser });
-  }
+    bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      if (err) {
+        res.send({ success: false });
+        return res.status(401).json({ message: 'Auth failed' });
+      } else if (result) {
+        const userInfo = {
+          userId: user[0]._id,
+          name: user[0].name,
+          email: user[0].email
+        };
+        const token = jwt.sign(userInfo, process.env.JWT_KEY, {
+          expiresIn: '1h',
+          issuer: 'server-admin'
+        });
+        res.cookie('token', token, cookieOptions);
+        return res.send({ success: true, userInfo });
+      } else {
+        res.send({ success: false });
+        return res.status(401).json({ message: 'Auth failed' });
+      }
+    });
+  });
 };
 
 exports.auth = (req, res) => {

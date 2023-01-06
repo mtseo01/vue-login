@@ -15,13 +15,16 @@ exports.singup = (req, res) => {
     .exec()
     .then((user) => {
       if (user.length >= 1) {
-        res.status(409).json({
-          message: 'email exists'
-        });
+        // res.status(409).json({
+        //   message: 'email exists'
+        // });
+        res.send({ success: false, message: 'email exists' });
+        return 0;
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
-            return res.status(500).json({ error: err });
+            res.send({ success: false });
+            // res.status(500).json({ error: err });
           } else {
             const user = new User({
               _id: new mongoose.Types.ObjectId(),
@@ -33,11 +36,14 @@ exports.singup = (req, res) => {
               .save()
               .then((result) => {
                 console.log(result);
-                res.status(201).json({
-                  message: 'User created'
-                });
+                // res.status(201).json({
+                //   message: 'User created'
+                // });
+                res.send({ success: true, message: 'User created' });
               })
-              .catch((err) => res.status(500).json({ error: err }));
+              .catch((err) => {
+                res.status(500).json({ error: err });
+              });
           }
         });
       }
@@ -47,15 +53,15 @@ exports.singup = (req, res) => {
 exports.login = (req, res) => {
   User.find({ email: req.body.email }).then((user) => {
     if (user.length < 1) {
-      res.send({ success: false });
-      return res.status(404).json({
-        message: 'User not found'
-      });
+      res.send({ success: false, message: 'User not found' });
+      // return res.status(404).json({
+      //   message: 'User not found'
+      // });
     }
     bcrypt.compare(req.body.password, user[0].password, (err, result) => {
       if (err) {
         res.send({ success: false });
-        return res.status(401).json({ message: 'Auth failed' });
+        // return res.status(401).json({ message: 'Auth failed' });
       } else if (result) {
         const userInfo = {
           userId: user[0]._id,
@@ -66,11 +72,12 @@ exports.login = (req, res) => {
           expiresIn: '1h',
           issuer: 'server-admin'
         });
-        res.cookie('token', token, cookieOptions);
+        res.setHeader('token', token, cookieOptions);
+        // res.status(200).json({ message: 'successful!', token: token });
         return res.send({ success: true, userInfo });
       } else {
         res.send({ success: false });
-        return res.status(401).json({ message: 'Auth failed' });
+        // return res.status(401).json({ message: 'Auth failed' });
       }
     });
   });
@@ -79,7 +86,7 @@ exports.login = (req, res) => {
 exports.auth = (req, res) => {
   console.log(req.cookies);
   if (req.cookies && req.cookies.token) {
-    jwt.verify(req.cookies.token, 'abc1234', (err, decoded) => {
+    jwt.verify(req.cookies.token, process.env.JWT_KEY, (err, decoded) => {
       if (err) {
         console.log('만료된 토큰입니다.');
         return res.sendStatus(401);
@@ -90,6 +97,6 @@ exports.auth = (req, res) => {
     });
   } else {
     console.log('토큰이 없습니다.');
-    return res.sendStatus(401);
+    return res.send({ success: false });
   }
 };

@@ -32,6 +32,15 @@
         <v-btn
           v-if="isLogin === false"
           router
+          :to="{ name: 'signup' }"
+          variant="text"
+          color="blue-lighten-2"
+        >
+          회원가입
+        </v-btn>
+        <v-btn
+          v-if="isLogin === false"
+          router
           :to="{ name: 'login' }"
           append-icon="mdi-login"
           variant="text"
@@ -68,6 +77,8 @@
 
 <script>
 import { mapState } from 'vuex'
+// import store from '@/store/store'
+// import axios from 'axios'
 export default {
   name: 'App',
 
@@ -88,8 +99,21 @@ export default {
         name: 'My Page',
         id: 3
       }
-    ]
+    ],
+    userInfo: null
   }),
+  // setup() {
+  //   axios
+  //     .post('http://localhost:3000/user/auth', document.cookie, {
+  //       withCredentials: true
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data)
+  //       store.commit('loginSuccess', res.data)
+  //     })
+  //     .catch((err) => console.log(err))
+  // },
+  created() {},
   computed: {
     ...mapState(['isLogin'])
   },

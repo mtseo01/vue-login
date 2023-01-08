@@ -30,20 +30,20 @@ export default createStore({
   actions: {
     // 비지니스 로직
     // 로그인 시도
-    login({ commit }, loginObj) {
-      axios
-        .post('http://localhost:3000/user/login', loginObj, {
-          withCredentials: true
-        })
-        .then((res) => {
-          if (res.data.success) {
-            commit('loginSuccess', res.data.userInfo)
-            router.push({ name: 'myPage' })
-          } else {
-            commit('loginError')
+    async login({ commit }, loginObj) {
+      try {
+        const { data } = await axios.post(
+          'http://localhost:3000/user/login',
+          loginObj,
+          {
+            withCredentials: true
           }
-        })
-        .catch((err) => console.log('error : ', err))
+        )
+        commit('loginSuccess', data.userInfo)
+        router.push({ name: 'myPage' })
+      } catch (error) {
+        commit('loginError')
+      }
     },
     logout({ commit }) {
       commit('logout')

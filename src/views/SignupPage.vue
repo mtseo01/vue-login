@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-container style="max-width: 400px">
+    <SignupForm></SignupForm>
+    <!-- <v-container style="max-width: 400px">
       <v-card title="회원가입" class="mx-auto px-6 py-8" max-width="344">
         <v-form v-model="form" @submit.prevent="onSubmit"
           ><v-text-field
@@ -63,78 +64,24 @@
           </v-btn>
         </v-form>
       </v-card>
-    </v-container>
+    </v-container> -->
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 // import router from '@/router/index'
-import { mapState, mapActions } from 'vuex'
+import SignupForm from '@/components/SignupForm.vue'
 export default {
-  components: {},
+  components: { SignupForm },
   data() {
-    return {
-      ...mapActions(['login']),
-      form: false,
-      email: null,
-      name: null,
-      password: null,
-      loading: false,
-      isSignUp: false,
-      isSignUpError: false,
-      logMessage: ''
-    }
+    return {}
   },
-  computed: {
-    ...mapState(['isLogin', 'isLoginError'])
-  },
+
   setup() {},
   created() {},
   mounted() {},
   unmounted() {},
-  methods: {
-    onSubmit() {
-      if (!this.form) return
-
-      this.loading = true
-
-      setTimeout(() => (this.loading = false), 300)
-    },
-    required(v) {
-      return !!v || '입력이 필요합니다.'
-    },
-    async signUp() {
-      try {
-        const userObj = {
-          email: this.email,
-          password: this.password,
-          name: this.name
-        }
-        const res = await axios.post(
-          'http://localhost:3000/user/signup',
-          userObj,
-          {
-            withCredentials: true
-          }
-        )
-        console.log(res)
-        this.isSignUp = true
-        // router.push({ name: 'home' })
-        // this.initForm()
-      } catch (error) {
-        console.log(error)
-
-        this.logMessage = error.message
-        this.isSignUpError = true
-      }
-    }
-    // initForm() {
-    //   this.email = ''
-    //   this.password = ''
-    //   this.name = ''
-    // }
-  }
+  methods: {}
 }
 </script>
 <style scoped></style>

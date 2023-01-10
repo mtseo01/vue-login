@@ -66,7 +66,8 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex'
-import axios from 'axios'
+import { userSignup } from '@/api/user'
+
 export default {
   components: {},
   computed: {
@@ -107,29 +108,14 @@ export default {
           password: this.password,
           name: this.name
         }
-        const res = await axios.post(
-          'http://localhost:3000/user/signup',
-          userObj,
-          {
-            withCredentials: true
-          }
-        )
-        console.log(res)
+        await userSignup(userObj)
         this.isSignUp = true
-        // router.push({ name: 'home' })
-        // this.initForm()
+        this.$router.push({ name: 'home' })
       } catch (error) {
-        console.log(error)
-
-        this.logMessage = error.message
+        this.logMessage = error.response.data.message
         this.isSignUpError = true
       }
     }
-    // initForm() {
-    //   this.email = ''
-    //   this.password = ''
-    //   this.name = ''
-    // }
   }
 }
 </script>

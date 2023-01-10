@@ -1,11 +1,12 @@
 import { createStore } from 'vuex'
 import router from '../router'
-import axios from 'axios'
+import { userLogin } from '@/api/user'
 export default createStore({
   state: {
-    userInfo: null,
+    userInfo: '',
     isLogin: false,
-    isLoginError: false
+    isLoginError: false,
+    token: ''
   },
   getters: {},
   mutations: {
@@ -26,20 +27,19 @@ export default createStore({
       state.isLoginError = false
       state.userInfo = null
     }
+    // 토큰 핸들링
+    // setToken(state, token) {
+    //   state.token = token
+    // }
   },
   actions: {
     // 비지니스 로직
     // 로그인 시도
     async login({ commit }, loginObj) {
       try {
-        const { data } = await axios.post(
-          'http://localhost:3000/user/login',
-          loginObj,
-          {
-            withCredentials: true
-          }
-        )
+        const { data } = await userLogin(loginObj)
         commit('loginSuccess', data.userInfo)
+        // commit('setToken', data.token)
         router.push({ name: 'myPage' })
       } catch (error) {
         commit('loginError')

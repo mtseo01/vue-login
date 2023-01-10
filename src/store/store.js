@@ -1,12 +1,13 @@
 import { createStore } from 'vuex'
 import router from '../router'
 import { userLogin } from '@/api/user'
+import { saveTokenAtCookie } from '@/utils/cookies'
 export default createStore({
   state: {
     userInfo: '',
     isLogin: false,
     isLoginError: false,
-    token: ''
+    token: saveTokenAtCookie() || ''
   },
   getters: {},
   mutations: {
@@ -26,11 +27,11 @@ export default createStore({
       state.isLogin = false
       state.isLoginError = false
       state.userInfo = null
-    }
+    },
     // 토큰 핸들링
-    // setToken(state, token) {
-    //   state.token = token
-    // }
+    setToken(state, token) {
+      state.token = token
+    }
   },
   actions: {
     // 비지니스 로직
@@ -39,7 +40,8 @@ export default createStore({
       try {
         const { data } = await userLogin(loginObj)
         commit('loginSuccess', data.userInfo)
-        // commit('setToken', data.token)
+        commit('setToken', data.token)
+        saveTokenAtCookie(data.token)
         router.push({ name: 'myPage' })
       } catch (error) {
         commit('loginError')

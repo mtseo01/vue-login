@@ -1,13 +1,13 @@
 import { createStore } from 'vuex'
 import router from '../router'
 import { userLogin } from '@/api/user'
-import { saveTokenAtCookie } from '@/utils/cookies'
+import { saveTokenAtCookie, deleteCookie } from '@/utils/cookies'
 export default createStore({
   state: {
     userInfo: '',
     isLogin: false,
     isLoginError: false,
-    token: saveTokenAtCookie() || ''
+    token: ''
   },
   getters: {},
   mutations: {
@@ -27,6 +27,8 @@ export default createStore({
       state.isLogin = false
       state.isLoginError = false
       state.userInfo = null
+      state.token = null
+      deleteCookie('token')
     },
     // 토큰 핸들링
     setToken(state, token) {

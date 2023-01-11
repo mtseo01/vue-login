@@ -1,13 +1,17 @@
 import { createStore } from 'vuex'
 import router from '../router'
 import { userLogin } from '@/api/user'
-import { saveTokenAtCookie, deleteCookie } from '@/utils/cookies'
+import {
+  saveTokenAtCookie,
+  deleteCookie,
+  getTokenFromCookie
+} from '@/utils/cookies'
 export default createStore({
   state: {
     userInfo: '',
     isLogin: false,
     isLoginError: false,
-    token: ''
+    token: '' || getTokenFromCookie()
   },
   getters: {},
   mutations: {

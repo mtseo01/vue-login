@@ -83,20 +83,31 @@ exports.login = (req, res) => {
 	});
 };
 
-exports.auth = (req, res) => {
+exports.getUserInfo = (req, res) => {
 	console.log(req.cookies);
 	if (req.cookies && req.cookies.token) {
 		jwt.verify(req.cookies.token, process.env.JWT_KEY, (err, decoded) => {
 			if (err) {
 				console.log('만료된 토큰입니다.');
-				return res.sendStatus(401);
+				return res
+					.status(401)
+					.json({ success: false, message: '만료된 토큰입니다.' });
 			} else {
 				console.log(decoded);
-				res.send(decoded);
+				res.status(200).json({
+					success: true,
+					user: {
+						email: decoded.email,
+						name: decoded.name,
+						userId: decoded.userId,
+					},
+				});
 			}
 		});
 	} else {
 		console.log('토큰이 없습니다.');
-		return res.send({ success: false });
+		return res
+			.status(500)
+			.json({ success: false, message: '토큰이 없습니다.' });
 	}
 };
